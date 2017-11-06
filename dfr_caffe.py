@@ -3,7 +3,6 @@ Created on Oct 27, 2017
 
 @author: rpalyam
 '''
-
 import numpy as np
 import sys
 import caffe
