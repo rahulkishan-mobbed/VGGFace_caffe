@@ -57,18 +57,6 @@ if __name__ == '__main__':
                 model_weights,  # contains the trained weights
                 caffe.TEST)     # use test mode (e.g., don't perform dropout)
 
-
-    # load the mean image for subtraction
-#     mu = np.array([93.5940, 104.7624 ,129.1863])
-#     print 'mean-subtracted values:', zip('BGR', mu)
-
-    # create transformer for the input called 'data'
-#     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
-# 
-#     transformer.set_transpose('data', (2,0,1))  # move image channels to outermost dimension
-#     transformer.set_channel_swap('data', (2,1,0))  # swap channels from RGB to BGR
-# #     transformer.set_mean('data', mu)            # subtract the dataset-mean value in each channel
-#     transformer.set_raw_scale('data', 255)      # rescale from [0, 1] to [0, 255]
     
     faces_db = '/vol/corpora/faces/LFW/lfw-facedb/original_faces/'
     distances = []
@@ -104,22 +92,3 @@ if __name__ == '__main__':
     np.save('distances.npy', distances)
     np.save('dist_cosine.npy', distances_c)
     np.save('dist_eucl.npy', distances_e)
-    
-#     sorted_dist = np.argsort(dist)
-#     
-#     far = 0
-#     frr = 0
-#     cardinal = 300
-#     with open(pairs_file, 'r') as fl_pairs:
-#         for i in range(len(sorted_dist)):
-#             lines = fl_pairs.readlines()
-#             for j, line in enumerate(lines, 0):
-#                 content = line.split()
-#                 if len(content) == 3:
-#                     if dist[j-1] > sorted_dist[i]:
-#                         frr +=1
-#                 elif len(content) == 4:
-#                     if dist[j-1] <= sorted_dist[i]:
-#                         far +=1
-#                 
-            
