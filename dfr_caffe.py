@@ -52,43 +52,9 @@ def get_scores(net, img):
     return net.blobs['fc7'].data
 
 def compute_distance(net, img1, img2):
-#     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
-# 
-#     transformer.set_transpose('data', (2,0,1))  # move image channels to outermost dimension
-#     transformer.set_channel_swap('data', (2,1,0))  # swap channels from RGB to BGR
-# #     transformer.set_mean('data', mu)            # subtract the dataset-mean value in each channel
-#     transformer.set_raw_scale('data', 255)      # rescale from [0, 1] to [0, 255]
-#     image1 = caffe.io.load_image(img1)
-#     img1 = caffe.io.resize_image(image1, (256,256))
-#     img2 = caffe.io.resize_image(image1, (384,384))
-#     img3 = caffe.io.resize_image(image1, (512,512))
-#     cen1, cflip1 = centre_img(img1,np.array([224,224]))
-#     cen2, cflip2 = centre_img(img2,np.array([224,224]))
-#     cen3, cflip3 = centre_img(img3,np.array([224,224]))
-#     net.blobs['data'].reshape(6,3,224,224)
-#     
-#     net.blobs['data'].data[0,...] = transformer.preprocess('data', cen1)
-#     net.blobs['data'].data[1,...] = transformer.preprocess('data', cflip1)
-#     net.blobs['data'].data[2,...] = transformer.preprocess('data', cen2)
-#     net.blobs['data'].data[3,...] = transformer.preprocess('data', cflip2)
-#     net.blobs['data'].data[4,...] = transformer.preprocess('data', cen3)
-#     net.blobs['data'].data[5,...] = transformer.preprocess('data', cflip3)
-#      
-#     net.forward()
-#     caffe_ft = net.blobs['prob'].data
-#     print np.argmax(caffe_ft)
-     
     id1 = get_scores(net, img1)
     id1 = np.mean(id1, axis=0)
     id1_norm = id1 / np.linalg.norm(id1)
-#     image2 = caffe.io.load_image(img2)
-#     transformed_image = transformer.preprocess('data', image2)
-#      
-#     net.blobs['data'].data[...] = transformed_image
-#      
-#     net.forward()
-#     caffe_ft = net.blobs['prob'].data
-#     print np.argmax(caffe_ft)
     id2 = get_scores(net,img2)
     id2 = np.mean(id2, axis=0)
     
@@ -97,16 +63,10 @@ def compute_distance(net, img1, img2):
     print comp_dist
     dist_eucl = ssd.euclidean(id1_norm, id2_norm)
     dist_cosine = ssd.cosine(id1_norm, id2_norm)
-#     comp_dist = ssd.cdist(id1_norm, id2_norm, 'braycurtis')
-#     dist_cosine = ssd.cdist(id1_norm, id2_norm, 'cosine')
-#     dist_eucl = ssd.cdist(id1_norm, id2_norm, 'euclidean')
     return comp_dist, dist_cosine, dist_eucl
 
 if __name__ == '__main__':
     caffe_root = '/home/rpalyam/Downloads/caffe-master/'  # this file should be run from {caffe_root}/examples (otherwise change this line)
-#     sys.path.insert(0, caffe_root + 'python')
-# 
-#     caffe.set_mode_cpu()
 
     model_def = caffe_root + 'models/vgg/VGG_FACE_deploy.prototxt'
     model_weights = caffe_root + 'models/vgg/VGG_FACE.caffemodel'
@@ -114,19 +74,6 @@ if __name__ == '__main__':
     net = caffe.Net(model_def,      # defines the structure of the model
                 model_weights,  # contains the trained weights
                 caffe.TEST)     # use test mode (e.g., don't perform dropout)
-
-
-    # load the mean image for subtraction
-#     mu = np.array([93.5940, 104.7624 ,129.1863])
-#     print 'mean-subtracted values:', zip('BGR', mu)
-
-    # create transformer for the input called 'data'
-#     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
-# 
-#     transformer.set_transpose('data', (2,0,1))  # move image channels to outermost dimension
-#     transformer.set_channel_swap('data', (2,1,0))  # swap channels from RGB to BGR
-# #     transformer.set_mean('data', mu)            # subtract the dataset-mean value in each channel
-#     transformer.set_raw_scale('data', 255)      # rescale from [0, 1] to [0, 255]
     
     faces_db = '/vol/corpora/faces/LFW/lfw-facedb/original_faces/'
     distances = []
@@ -156,28 +103,6 @@ if __name__ == '__main__':
                 distances = np.append(distances, curr_dist)
                 distances_c = np.append(distances_c, curr2)
                 distances_e = np.append(distances_e, curr3)
-#     print distances
-#     
-#     dist = np.copy(distances)
     np.save('distances.npy', distances)
     np.save('dist_cosine.npy', distances_c)
     np.save('dist_eucl.npy', distances_e)
-    
-#     sorted_dist = np.argsort(dist)
-#     
-#     far = 0
-#     frr = 0
-#     cardinal = 300
-#     with open(pairs_file, 'r') as fl_pairs:
-#         for i in range(len(sorted_dist)):
-#             lines = fl_pairs.readlines()
-#             for j, line in enumerate(lines, 0):
-#                 content = line.split()
-#                 if len(content) == 3:
-#                     if dist[j-1] > sorted_dist[i]:
-#                         frr +=1
-#                 elif len(content) == 4:
-#                     if dist[j-1] <= sorted_dist[i]:
-#                         far +=1
-#                 
-            
